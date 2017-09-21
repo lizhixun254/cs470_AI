@@ -4,9 +4,12 @@
 
 #### Homework 1
 
+- ***Windows***
+	- Unfortunately, this project was primarily designed to be running on `Windows` Machine...
+
 - ***python3.6***
 	- Our professor clearly announced that all the source should be run on `python 3.6`
-	- But this whole project is implemented to be run on both `python2` and `python3`
+
 
 ## Homework 1 - pacman
 
