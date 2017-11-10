@@ -8,9 +8,11 @@
 
 from util import manhattanDistance
 from game import Directions
+from game import Actions
 import random, util
 
 from game import Agent
+import inspect
 
 ##this is example agents 
 class LeftTurnAgent(Agent):
@@ -47,8 +49,18 @@ class BFSAgent(Agent):
   """
     Your BFS agent (question 1)
   """
-  # def __init__(self):
+  def __init__(self):
+    self.f = open('result.txt', 'w')
+    self.current = Node (False, (0, 0))
     
+    self.future = []
+    self.history = set ()
+    self.f.write (str (self.current.position) + '\n')
+    setf.history.add (self.current)
+
+    self.visited = False
+    self.queue = util.Queue()
+
   def getAction(self, gameState):
 
     """
@@ -79,7 +91,53 @@ class BFSAgent(Agent):
     """
     "*** YOUR CODE HERE ***"
 
-    return a
+    # visited = set() #non-iterable set 
+
+    # # position = gameState.getPacmanPosition()
+    # # print (position)
+
+    # state = gameState.getPacmanState()
+    # print (state)
+
+    # print (gameState, type (gameState))
+    # legal = gameState.getLegalPacmanActions()
+    # print (legal)
+
+    # if Directions.STOP in legal: 
+    #   legal.remove(Directions.STOP)
+
+    # successors = [(gameState.generateSuccessor(0, action), action) for action in legal] 
+    # for s in successors:
+    #   print ("SUCCESSORS:\n", s[0], s[1])
+
+    # scored = [(self.evaluationFunction(state), action) for state, action in successors]
+    # for sc in scored:
+    #   print ("SCORED:\n", sc)
+
+    # bestScore = max(scored)[0]
+    # print ("BESTSCORE: \n", bestScore)
+
+    # bestActions = [pair[1] for pair in scored if pair[0] == bestScore]
+    # for b in bestActions:
+    #   print ("BESTS: \n", b)
+    # #return random.choice(bestActions)
+
+    # First seen Node
+    if not visited:
+      legals = gameState.getLegalPacmanActions()
+
+    for legal in legals:
+      dx, dy = Actions._directions[legal]
+      x, y = self.current.position
+      node = Node (False, (x + dx, y + dy))
+
+      if node in self.history or node in self.future:
+        continue
+      node.parent = self.current
+      self.future.append (node)
+
+    dst = self.tovisit[0]
+    
 
 class AstarAgent(Agent):
   """
@@ -169,6 +227,33 @@ class Node:
         self.H = 0
         self.G = 0
 
+    def __init__(self, value, position):
+        self.value = value
+        self.position = position
+        self.parent = None
+        self.H = 0
+        self.G = 0
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    # For Node Comparison
+    def __gt__(self, other):
+        return self.position > other.position
+
+    def __lt__(self, other):
+        return self.position < other.position
+
+    def __ge__(self, other):
+        return self.position >= other.position
+
+    def __le__(self, other):
+        return self.position <= other.position
+
+    # For Set Hash value
+    def __hash__(self):
+        return hash (self.position)
+
     def move_cost(self):
         return 1
 
@@ -205,6 +290,48 @@ def aStar(start, goal, maps):
     path = util.Stack()
 
     "*** YOUR CODE HERE ***"
+
+    priorityQueue = util.PriorityQueueWithFunction (lambda priority : priority.H + priority.G)
+    
+    # Heuristic Function
+    start.H = util.manhattanDistance (start.position, goal.position)
+    # Estimation Function
+    start.G = 0
+
+    priorityQueue.push (start)
+    history = set ()
+    depth = 1
+
+    while True:
+      if priorityQueue.isEmpty():
+        break
+
+      current = priorityQueue.pop()
+      if current == goal:
+        break
+
+      history.add (current)
+
+      for node in getChildren (current, maps):
+
+        if node in history: 
+          continue
+            
+        node.parent = current
+        node.H = util.manhattanDistance (node.position, goal.position)
+        node.G = depth
+        priorityQueue.push (node)
+
+      depth += 1
+
+    while True:
+      path.push (current)
+
+      if current.parent is None:
+        break
+
+      current = current.parent
+
 
     return path
 

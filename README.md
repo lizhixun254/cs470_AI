@@ -11,6 +11,8 @@
 	- Our professor clearly announced that all the source should be run on `python 3.6`
 
 
-## Homework 1 - pacman
+## Homework 1 - Uninformed and Informed Search
 
 Basic code is from [Stanford Pacman Project](http://stanford.edu/~cpiech/cs221/homework/prog/pacman/pacman.html)
+
+Only `searchAgent.py`file is modified.
